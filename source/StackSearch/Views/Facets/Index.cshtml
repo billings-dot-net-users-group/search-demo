@@ -1,0 +1,51 @@
+﻿@model StackSearch.Model.SearchViewModel
+           
+<div class="container-fluid">
+    <div class="row">
+        <div class="span16">
+        @using (Html.BeginForm("index", "facets", FormMethod.Get, new { id = "search"})) {
+            @Html.TextBoxFor(m => m.q, new { @class = "xlarge" })
+            <input type="submit" class="btn primary" value="Search"/>
+        }
+        </div>
+    </div>
+    @if (Model.Result != null) {
+    <div class="sidebar">
+        <h2>Facets</h2>
+        @if (Model.Result.Facets != null) {
+            foreach (var facet in Model.Result.Facets) {
+                <h3>@facet.Key</h3>
+                <ul>
+                @foreach(var facetValue in facet.Value) {
+                    <li>@Html.ActionLink(String.Format("{0} ({1})", facetValue.Key, facetValue.Value), "index", "facets", new { q = Model.q, f = facet.Key + ":" + facetValue.Key}, null)</li>
+                }
+                </ul>                            
+            }
+        }
+    </div>
+    <div class="content">
+            <div>
+                <h2>@Model.Result.Source <small>@Model.Result.Total results in @Model.Result.Duration.ToString("F3") seconds</small></h2>
+                @if (Model.Result.Documents != null) {
+                    foreach (var doc in Model.Result.Documents) {
+                         <div class="search-result">
+                            <h5><a href="http://superuser.com/questions/@doc.Id">@doc.Fields["title"]</a></h5>
+                            <p>@Html.Raw(doc.Snippets["text"])</p>
+                         </div>
+                     }
+                }
+            </div>
+    </div>
+    }
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/s/jquery.indextank.ize.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/s/jquery.indextank.autocomplete.js")"></script>
+<script type="text/javascript">
+    var publicApiUrl = 'http://dkjak.api.indextank.com';
+    var indexName = 'billingsdotnet';
+    $(document).ready(function () {
+        $('#search').indextank_Ize(publicApiUrl, indexName);
+        $('#q').indextank_Autocomplete();
+    });
+</script>

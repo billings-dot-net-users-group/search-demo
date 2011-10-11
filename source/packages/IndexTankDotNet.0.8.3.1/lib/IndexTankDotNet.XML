@@ -1,0 +1,604 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IndexTankDotNet</name>
+    </assembly>
+    <members>
+        <member name="T:IndexTankDotNet.IndexTankClient">
+            <summary>
+            A client which allows programmatic access to indexes in an IndexTank account.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the IndexTankClient class using a private API URL string. 
+            <para>Same as calling: new IndexTankClient(new Uri(privateUrl))</para>
+            </summary>
+            <param name="privateUrl">A private URL to an IndexTank account.</param>
+            <seealso cref="M:IndexTankDotNet.IndexTankClient.#ctor(System.Uri)"/>
+            <exception cref="T:System.ArgumentNullException">Thrown if orivateUrl is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.#ctor(System.Uri)">
+            <summary>
+            Initializes a new instance of the IndexTankClient class using a URI to a private API URL.
+            </summary>
+            <param name="privateUri">A Uri that indicates a provate URL to an IndexTank account.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if privateUri is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.CreateIndex(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new index.
+            </summary>
+            <param name="indexName">The name of the index to create.</param>
+            <param name="enablePublicApi">Indicates whether the public API should be enabled for the index.</param>
+            <param name="enableSuggestions">Indicates whether fuzzy searching should be enabled for the index. If this value is true, but fuzzy searching is not supported for the index, a NotSupportedException will be thrown.</param>
+            <returns>Returns the newly created index.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if indexName is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if indexName is an empty string, or contains only whitespace.</exception>
+            <exception cref="T:System.FormatException">Thrown if indexName contains one or more characters that is not a letter, digit, or underscore (_).</exception>
+            <exception cref="T:System.NotSupportedException">Thrown if enableSuggestions = true, but fuzzy searching is not supported for the index.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.GetIndex(System.String)">
+            <summary>
+            Gets an index by name.
+            </summary>
+            <param name="indexName">The name of the index.</param>
+            <returns>Returns an Index.</returns>
+            <exception cref="T:IndexTankDotNet.IndexTankProtocolException">Thrown if an unexpected error occurs that prevents the index from being retrieved.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.GetIndexes">
+            <summary>
+            Gets all indexes on an account.
+            </summary>
+            <returns>Returns a collection of indexes.</returns>
+            /// <exception cref="T:IndexTankDotNet.IndexTankProtocolException">Thrown if an unexpected error occurs that prevents the indexes from being retrieved.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankClient.DeleteIndex(System.String)">
+            <summary>
+            Deletes an index by name.
+            </summary>
+            <param name="indexName">The name of the index to delete.</param>
+            <returns>true if the deletion succeeds; otherwise false.</returns>
+        </member>
+        <member name="T:IndexTankDotNet.IndexTankProtocolException">
+            <summary>
+            The exception that is thrown to represent connection failures, failed DNS lookups, invalid credentials, and the like.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.IndexTankException">
+            <summary>
+            The base exception that represents both 1) errors returned from the IndexTank API, and 2) errors caused by connection failures, failed DNS lookups, invalid credentials, and the like.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.IndexTankException.GetHttpStatusCode">
+            <summary>
+            Gets the HTTP status code associated with an error.
+            </summary>
+            <returns>Returns an HttpStatusCode.</returns>
+        </member>
+        <member name="T:IndexTankDotNet.SearchResult">
+            <summary>
+            The result returned by a search.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.Matches">
+            <summary>
+            Gets the total number of documents that satisfy the query, without regard to paging.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.SearchTime">
+            <summary>
+            Gets the time it took for the search to be executed, in seconds.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.QueryText">
+            <summary>
+            Gets the query text that was supplied to the original query.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.DidYouMeanSuggestion">
+            <summary>
+            Gets a string containing a closely related term or phrase that could yield more relevant results, if one exists and if fuzzy searching is enabled on the index; otherwise null.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.ResultDocuments">
+            <summary>
+            Gets a collection of ResultDocument objects that contain data about the documents that were matched by the query. If no documents were matched, this will be null.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.SearchResult.Facets">
+            <summary>
+            Gets a nested key/value collection that maps how categories were matched by the result documents. For the outer collection; the key is the name of the category, and the value is another key/value collection. For the second (nested) collection, the key is the value of the category, and the value is the number of times the category value was matched. If no documents are matched, or there are no categories associated with the documents that were matched, this will be null.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.Query">
+            <summary>
+            A query that can be used to search the documents in an index.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.Query.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the Query class.
+            </summary>
+            <param name="queryText">The text to search for. Can include optional syntax that allows the targeting of specific fields, boolean operators, phrase searching, and more.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if queryText is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if queryText is an empty string, or contains only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Query.Skip(System.Int32)">
+            <summary>
+            Allows a given number of documents that satisfy the query be skipped over in the search result. Used for paging purposes.
+            </summary>
+            <param name="count">The number of result documents to skip.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.Take(System.Int32)">
+            <summary>
+            Used to restrict the number of documents that will be returned from those that satisfy the query. Used for paging purposes.
+            </summary>
+            <param name="count">The number of result documents to return.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithScoringFunction(System.Int32)">
+            <summary>
+            Used to indicate which scoring function to use to order the documents that are returned. If this method is not called, function 0 will be used by default.
+            </summary>
+            <param name="functionNumber">The number of the function to be used.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithSnippetFromFields(System.String[])">
+            <summary>
+            Used to indicate that the matched text and the text immediately preceding and following it should be returned along with the result.
+            </summary>
+            <param name="fields">The names of the fields from which snippets may be retrieved.</param>
+            <returns>Returns the Query.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if fields is null, or if any one of the field strings in the list is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithFields(System.String[])">
+            <summary>
+            Used to indicate that the entire contents of one or more fields should be returned along with the result.
+            </summary>
+            <param name="fields">The names of the fields to be retrieved.</param>
+            <returns>Returns the Query.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if fields is null, or if any one of the field strings in the list is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithVariables">
+            <summary>
+            Used to indicate that the variables associated with each result document should be returned.
+            </summary>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithCategories">
+            <summary>
+            Used to indicate that the categories associated with each result document should be returned.
+            </summary>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithQueryVariable(System.Int32,System.Single)">
+            <summary>
+            Used to supply an additional variable that can be used by the scoring function. Useful for distance functions used in geolocation, among other uses.
+            </summary>
+            <param name="variableNumber">A number used to distinguish the variable in the query and in the scoring function..</param>
+            <param name="value">The value of the query variable.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithCategoryFilter(System.String,System.String[])">
+            <summary>
+            Used to filter result documents by category, based on the the value of the category to match. May be called more than once to specify multiple categories.
+            </summary>
+            <param name="category">The name of the category to filter by.</param>
+            <param name="matches">The values of the specified category that should be matched for a result document to be returned.</param>
+            <returns>Returns the Query.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if category or matches is null, or if any of the match strings is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if category is an empty string, or contain only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithDocumentVariableFilter(System.Int32,System.Single,System.Single)">
+            <summary>
+            Used to filter result documents by a range of variable values. May be called more than once to specify multiple variables, or multiple ranges for a single variable.
+            </summary>
+            <param name="variableNumber">The number of the variable to filter by.</param>
+            <param name="lowerBound">The lower bound of the range in which the variable's value should lie.</param>
+            <param name="upperBound">The upper bound of the range in which the variable's value should lie.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Query.WithFunctionFilter(System.Int32,System.Double,System.Double)">
+            <summary>
+            Used to filter result documents by indicating that a scoring function calculated result should fall into a specified range. May be called more than once to specify multiple functions, or multiple ranges for a single function.
+            </summary>
+            <param name="functionNumber">The number of the function to filter by.</param>
+            <param name="lowerBound">The lower bound of the range in which the function's calculated result should lie.</param>
+            <param name="upperBound">The upper bound of the range in which the function's calculated result should lie.</param>
+            <returns>Returns the Query.</returns>
+        </member>
+        <member name="T:IndexTankDotNet.IndexTankApiException">
+            <summary>
+            The exception that is thrown to represent errors returned from the IndexTank API.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.Document">
+            <summary>
+            An object that holds content that can be stored in an IndexTank index. 
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.Document.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the Document class.
+            </summary>
+            <param name="documentId">The identifier for the document. If you specify an identifier that already exists in the document, the existing document will be overwritten with values from the new document.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the documentId is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the documentId is an empty string, or consists of only whitespace.</exception>
+            <exception cref="T:System.FormatException">Thrown when the documentId exceeds 1024 bytes.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Document.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the Document class, and populates it with content for the document's "text" field.
+            <para>Same as calling: new Document(documentId).AddField("text", text)</para>
+            </summary>
+            <param name="documentId">The unique identifier for the document.</param>
+            <param name="text">The textual content for the document's "text" field. The "text" field is the default field used for search queries.</param>
+            <seealso cref="M:IndexTankDotNet.Document.#ctor(System.String)"/>
+            <seealso cref="M:IndexTankDotNet.Document.AddField(System.String,System.String)"/>
+            <exception cref="T:System.ArgumentNullException">Thrown when the documentId is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the documentId is an empty string, or consists of only whitespace.</exception>
+            <exception cref="T:System.FormatException">Thrown when the documentId exceeds 1024 bytes.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Document.AddVariable(System.Int32,System.Single)">
+            <summary>
+            Attaches a variable to a document.
+            </summary>
+            <param name="variableNumber">The position of the variable on the document. If a variable with the same position already exists on the document, its value will be overwritten with the value you specify in this method. To simply update variables on an existing document, get a reference to the index the contains the document and use the UpdateVariable method instead.</param>
+            <param name="value">The value that will be used in calculations that use this variable.</param>
+            <returns>Returns the Document.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when the variable number is less than zero.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Document.AddField(System.String,System.String)">
+            <summary>
+            Attaches a field to a document.
+            </summary>
+            <param name="fieldName">The name of the field. If a field with the same name already exists on the document, its value will be overwritten with the value you specify in this method.</param>
+            <param name="text">The textual content of the field.</param>
+            <returns>Returns the Document.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when fieldName or text is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when fieldName is an empty string or consists of only whitespace; or when fieldName is "timestamp" and text is an empty string or consists of only whitespace.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when text exceeds 100 kbytes; or when fieldName is "timestamp" and text exceeds the value that can be converted to an Int32.</exception>
+            <exception cref="T:System.FormatException">Thrown when fieldName is "timestamp" and text contains a value that cannot be converted to an Int32.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Document.AddCategory(System.String,System.String)">
+            <summary>
+            Attaches a category to a document. get a reference to the index the contains the document and use the UpdateVariables method instead.
+            </summary>
+            <param name="categoryName">The name of the category. If a category with the same name already exists on the document, its value will be overwritten with the value you specify in this method. To simply update categories on an existing document, get a reference to the index the contains the document and use the UpdateCategory method instead.</param>
+            <param name="value">Text that represents the category's value..</param>
+            <returns>Returns the Document.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when categoryName or value is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when categoryName is empty, or consists of only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Document.AddTimestamp(System.DateTime)">
+            <summary>
+            Attach a date and time that is expected to contain the publication date of the document. If this method is not called, the time the document was added to the index will be used. This data is used to calculate the default sorting for search query results, which is that newer documents are listed first.
+            <para>Same as calling AddField("timestamp", "&lt;seconds between Unix epoch and desired time&gt;")</para>
+            </summary>
+            <param name="dateTime">The date and time of the publication of the document.</param>
+            <returns>Returns the Document.</returns>
+            <seealso cref="M:IndexTankDotNet.Document.AddField(System.String,System.String)"/>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when a DateTime is supplied such that the number of seconds since or until the Unix epoch (January 1, 1970 00:00 UTC) is greater than that which can be expressed by a 32-bit integer.</exception>
+        </member>
+        <member name="P:IndexTankDotNet.Document.DocumentId">
+            <summary>
+            Gets the identifier for the document.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.BatchIndexResult">
+            <summary>
+            Represents a result returned when attempting to index a document using the AddDocuments method of the Index object.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchIndexResult.Added">
+            <summary>
+            Gets a value indicating whether whether the document was successfully added to the index.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchIndexResult.Error">
+            <summary>
+            Gets a message indicating the reason a document was not successfully added to the index. If the document was successfully added, this value should be null.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchIndexResult.Document">
+            <summary>
+            Gets the document.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.Index">
+            <summary>
+            An object that contains documents that can be searched.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.Index.UpdateIndex(System.Boolean,System.Boolean)">
+            <summary>
+            Allows the enabling and disabling of various options in the index.
+            </summary>
+            <param name="enablePublicApi">Enables or disables the public API for the index.</param>
+            <param name="enableSuggestions">Enables or disables the ability to perform fuzzy searching against the index. If this value is true, but fuzzy searching is not supported for the index, a NotSupportedException will be thrown.</param>
+            <returns>true if the update succeeded; otherwise false.</returns>
+            <exception cref="T:System.NotSupportedException">Thrown if enableSuggestions = true, but fuzzy searching is not supported for the index.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.AddDocument(IndexTankDotNet.Document)">
+            <summary>
+            Adds a document to the index.
+            </summary>
+            <param name="document">The document to add to the index.</param>
+            <returns>true if the addition succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the document is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown if the document has no fields, or if the combined size of all fields in the document exceeds 100 kbytes.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.AddDocuments(System.Collections.Generic.IEnumerable{IndexTankDotNet.Document})">
+            <summary>
+            Allows the addition of several documents at once to the index.
+            </summary>
+            <param name="documents">The collection of documents to add to the index.</param>
+            <returns>Returns a BatchIndexResultCollection.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the collection of documents to add is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the collection of documents to add is empty.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when the overall size of the request exceeds 1MB.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.PromoteDocument(System.String,System.String)">
+            <summary>
+            Allows the promotion of a document to the top of the results page for a query that uses the given text.
+            </summary>
+            <param name="documentId">The identifier of the document to promote.</param>
+            <param name="queryText">The text of the query for which the document should be promoted.</param>
+            <returns>true if the promotion succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if either documentId or queryText are null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if either documentId or queryText are empty strings, or contain only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.DeleteDocument(System.String)">
+            <summary>
+            Deletes a document by its identifier.
+            </summary>
+            <param name="documentId">The document identifier.</param>
+            <returns>true if the deletion succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if documentId is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if documentId is empty, or contans only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.DeleteDocuments(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Allows the deletion of several documents at once from the index.
+            </summary>
+            <param name="documentIds">An array of document identifiers corresponding to the documents to be deleted.</param>
+            <returns>Returns a BatchDeleteResultCollection.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if documentIds is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if documentIds contains no elements.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.DeleteDocuments(IndexTankDotNet.Query)">
+            <summary>
+            Allows the batch deletion of documents that match the supplied query from the index. 
+            </summary>
+            <param name="query">A Query containing the text to search for, along with several other optional criteria which may be supplied by the Query object.</param>
+            <returns>true if the matched documents were successfully deleted; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if query is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.GetFunctions">
+            <summary>
+            Gets a key/value collection of the scoring functions associated with the index, where the key is the function's position in the index, and the value is the function's definition.
+            </summary>
+            <returns>Returns the key/value collection of scoring functions.</returns>
+        </member>
+        <member name="M:IndexTankDotNet.Index.AddFunction(System.Int32,System.String)">
+            <summary>
+            Adds a scoring function to the index for custom sorting of search results.
+            </summary>
+            <param name="functionNumber">The position of the function in the index.</param>
+            <param name="definition">The definition of the function's formula. The definition uses special syntax which is described in the IndexTank documentation.</param>
+            <returns>true if the addition succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if the definition is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the definition is an empty string, or consists of only whitespace.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if functionNumber is less than zero.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.DeleteFunction(System.Int32)">
+            <summary>
+            Deletes a function at the specified position.
+            </summary>
+            <param name="functionNumber">The position of the function to delete.</param>
+            <returns>true if the deletion succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if functionNumber is less than zero.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.UpdateVariables(System.String,System.Collections.Generic.IDictionary{System.Int32,System.Single})">
+            <summary>
+            Quickly updates the variables associated with an existing document, without having to resend the entire document. Updates made using this method do not count toward your account's indexing limits.
+            </summary>
+            <param name="documentId">The identifier of the document whose variables are to be updated.</param>
+            <param name="variables">A key/value collection of the variables to update, where the key is the position of the variable, and the value is the value of the variable.</param>
+            <returns>true if the update succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if either documentId or variables are null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if documentId is an empty string, or consists of only whitespace; or if the list of variables is empty.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.UpdateVariable(System.String,System.Int32,System.Single)">
+            <summary>
+            Quickly updates a variable associated with an existing document, without having to resend the entire document. Updates made using this method do not count toward your account's indexing limits.
+            </summary>
+            <param name="documentId">The identifier of the document upon which the variable is to be updated.</param>
+            <param name="variableNumber">The position of the variable to be updated.</param>
+            <param name="value">The new value to be assigned to the variable.</param>
+            <returns>true if the update succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if documentId is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if documentId is an empty string, or consists of only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.UpdateCategories(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Quickly updates the categories associated with an existing document, without having to resend the entire document. Updates made using this method do not count toward your account's indexing limits.
+            </summary>
+            <param name="documentId">The identifier of the document whose categories are to be updated.</param>
+            <param name="categories">A key/value collection of the categories to update, where the key is the name of the category, and the value is the value of the category.</param>
+            <returns>true if the update succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if either documentId or categories are null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if documentId is an empty string, or consists of only whitespace; or if the list of categories is empty.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.UpdateCategory(System.String,System.String,System.String)">
+            <summary>
+            Quickly updates a category associated with an existing document, without having to resend the entire document. Updates made using this method do not count toward your account's indexing limits.
+            </summary>
+            <param name="documentId">The identifier of the document upon which the category is to be updated.</param>
+            <param name="categoryName">The name of the category to be updated.</param>
+            <param name="value">The new value to be assigned to the category.</param>
+            <returns>true if the update succeeded; otherwise false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if either documentId, categoryName, or value are null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if either documentId or categoryName is an empty string, or consists of only whitespace.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.Search(IndexTankDotNet.Query)">
+            <summary>
+            Performs a search against the index using a complex query.
+            </summary>
+            <param name="query">A Query containing the text to search for, along with several other optional criteria which may be supplied by the Query object.</param>
+            <returns>Returns a SearchResult.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if query is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if the sum of the arguments passed to the Skip and Take methods of the supplied Query object exceeds 5000.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.Search(IndexTankDotNet.Query,System.Int32)">
+            <summary>
+            Performs a search against the index using a complex query.
+            </summary>
+            <param name="query">A Query containing the text to search for, along with several other optional criteria which may be supplied by the Query object.</param>
+            <param name="timeOutMilliseconds">The desired timeout in milliseconds.</param>
+            <returns>Returns a SearchResult.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if query is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if the sum of the arguments passed to the Skip and Take methods of the supplied Query object exceeds 5000; or if timeOutMilliseconds is less than or equal to zero.</exception>
+            <exception cref="T:System.TimeoutException">Thrown if the method does not return before the supplied timeout elapses.</exception>      
+        </member>
+        <member name="M:IndexTankDotNet.Index.Search(IndexTankDotNet.Query,System.String[])">
+            <summary>
+            Performs a search against the index using a complex query. Automatically searches across all specified fields without requiring any special syntax in the query text.
+            <para>Same as calling: Search(new Query("field1:queryText OR field2:queryText OR field3:queryText ... "))</para>
+            </summary>
+            <param name="query">A Query containing the text to search for, along with several other optional criteria which may be supplied by the Query object.</param>
+            <param name="fieldsToSearch">The fields to search in.</param>
+            <returns>Returns the Query.</returns>
+            <seealso cref="M:IndexTankDotNet.Index.Search(IndexTankDotNet.Query)"/>
+            <exception cref="T:System.ArgumentNullException">Thrown if query or fields is null, or if any of the strings in fields is null.</exception>
+        </member>
+        <member name="M:IndexTankDotNet.Index.Search(System.String)">
+            <summary>
+            Performs a search against the index using simple search text.
+            <para>Same as calling: Search(new Query(querytext))</para>
+            </summary>
+            <param name="queryText">The text to search for.</param>
+            <returns>Returns a SearchResult.</returns>
+            <seealso cref="M:IndexTankDotNet.Index.Search(IndexTankDotNet.Query)"/>
+        </member>
+        <member name="P:IndexTankDotNet.Index.Name">
+            <summary>
+            Gets the index name.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.Status">
+            <summary>
+            Gets the status of a retrieved index.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.IsStarted">
+            <summary>
+            Gets a value indicating whether the index has been started on the server. A value of false usually means that the index has been recently created and is not yet available for use.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.Code">
+            <summary>
+            Gets an alphanumeric code that uniquely identifies the index under a given name. If an index is deleted and a new one is created with the same name, it will have a different code.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.CreationTime">
+            <summary>
+            Gets the date and time the index was created on the server.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.Size">
+            <summary>
+            Gets the number of documents in the index. Size is not updated in real time, so the value may be up to a minute old.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.IsPublicApiEnabled">
+            <summary>
+            Gets a value indicating whether the public search API has been enabled for this index.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.Index.AreSuggestionsEnabled">
+            <summary>
+            Gets a value indicating whether "fuzzy" search suggestions have been enabled for this index.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.BatchIndexResultCollection">
+            <summary>
+            Represents a collection of BatchIndexResult objects that can interated over, or used to resubmit document additions that failed.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.BatchIndexResultCollection.GetFailedDocuments">
+            <summary>
+            A list of Document objects containing the documents for which batch addition failed.
+            </summary>
+            <returns>Returns an IList&lt;Document&gt;.</returns>
+        </member>
+        <member name="T:IndexTankDotNet.BatchDeleteResultCollection">
+            <summary>
+            Represents a collection of BatchDeleteResult objects that can interated over, or used to resubmit deletions that failed.
+            </summary>
+        </member>
+        <member name="M:IndexTankDotNet.BatchDeleteResultCollection.GetFailedDocIds">
+            <summary>
+            Gets an array of strings containing the ids of the documents for which batch deletion failed.
+            </summary>
+            <returns>Returns a string[].</returns>
+        </member>
+        <member name="T:IndexTankDotNet.ResultDocument">
+            <summary>
+            Contains data about a document that was matched by a query.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.DocumentId">
+            <summary>
+            Gets the document identifier.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.QueryRelevanceScore">
+            <summary>
+            Gets the query-specific document relevance score.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.Snippets">
+            <summary>
+            Gets a key/value collection of snippets containing the matched text and the text immediately preceding and following it, if they were requested by the query; where the key is the field name in which the text was found, and the value is the snippet.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.Categories">
+            <summary>
+            Gets a key/value collection of categories associated with the result document, if they were requested by the query; where the key is the category name, and the value is the category value.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.Fields">
+            <summary>
+            Gets a key/value collection of the result document fields that were requested by the query; where the key is the name of the field, and the value is the entire content from the field.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.ResultDocument.Variables">
+            <summary>
+            Gets a list of values of the variable associated with the result document if they were requested by the query, where the index of the variable in the list is the variable number.
+            </summary>
+        </member>
+        <member name="T:IndexTankDotNet.BatchDeleteResult">
+            <summary>
+            Represents a result returned when attempting to delete a document using the DeleteDocuments method of the Index object.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchDeleteResult.Deleted">
+            <summary>
+            Gets a value indicating whether the document was successfully deleted from the index.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchDeleteResult.Error">
+            <summary>
+            Gets a message indicating the reason a document was not successfully deleted from the index. If the document was successfully deleted, this value should be null.
+            </summary>
+        </member>
+        <member name="P:IndexTankDotNet.BatchDeleteResult.DocumentId">
+            <summary>
+            Gets the document identifier.
+            </summary>
+        </member>
+    </members>
+</doc>

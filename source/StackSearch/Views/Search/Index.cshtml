@@ -1,0 +1,25 @@
+﻿@model StackSearch.Model.SearchViewModel
+<div class="container">
+    <div class="row">
+        <div class="span16">
+        @using (Html.BeginForm("index", "search", FormMethod.Get)) {
+            @Html.TextBoxFor(m => m.q, new { @class = "xlarge" })
+            <input type="submit" class="btn primary" value="Search"/>
+        }
+        </div>
+    </div>
+    <div class="row">
+    @foreach (var result in Model.Results) {
+        <div class="span8">
+            <h2>@result.Source <small>@result.Total results in @result.Duration.ToString("F3") seconds</small></h2>
+            @if (result.Documents != null) {
+                foreach (var doc in result.Documents) {
+                     <div class="search-result">
+                        <h5><a href="http://superuser.com/questions/@doc.Id">@doc.Fields["title"]</a></h5>
+                     </div>
+                 }
+            }
+        </div>
+    }
+    </div>
+</div>
